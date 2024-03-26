@@ -1,0 +1,142 @@
+In the hibernate.cfg.xml file use mysql password of ur system.
+
+App.java
+------------------------------------------
+package com.kakarla.DemoHib;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+       Alien a = new Alien();
+       
+       a.setAid(103);
+       a.setAname("Ramu");
+       a.setColor("White");
+       
+       
+       Configuration con = new Configuration().configure().addAnnotatedClass(Alien.class);
+       
+       SessionFactory sf = con.buildSessionFactory();
+       
+       Session session = sf.openSession(); 
+       
+       Transaction tx = session.beginTransaction();
+    		   
+       session.save(a) ;
+       
+       tx.commit();
+       
+    }
+}
+
+Alien.java(POJO)
+-------------------------
+package com.kakarla.DemoHib;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="alien")
+public class Alien //POJO
+{
+    @Id
+	private int aid;
+	private  String aname;
+	private String color;
+	@Override
+	public String toString() {
+		return "Alien [aid=" + aid + ", aname=" + aname + ", color=" + color + "]";
+	}
+	public int getAid() {
+		return aid;
+	}
+	public void setAid(int aid) {
+		this.aid = aid;
+	}
+	public String getAname() {
+		return aname;
+	}
+	public void setAname(String aname) {
+		this.aname = aname;
+	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
+}
+
+
+hibernate.cfg.xml
+------------------------
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.password">here us ur password</property>        
+
+                                        //Use  mysql Password                    
+
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/neon</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+    </session-factory>
+</hibernate-configuration>
+
+
+
+pom.xml
+------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.kakarla</groupId>
+  <artifactId>DemoHib</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>DemoHib</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>6.4.4.Final</version>
+</dependency>
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.3.0</version>
+</dependency>
+  </dependencies>
+</project>
+
+

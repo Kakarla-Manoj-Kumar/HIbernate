@@ -1,0 +1,192 @@
+@ManyToMany for Student and @ManyToMany for Laptop Mapping Relation
+----------------------------------------------------------------------------------------------------
+Laptop.java
+------------------
+package com.kakarla.Mapping_Relations;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+
+
+@Entity
+public class Laptop {
+
+	@Id
+	private int lid;
+	private String lname;
+	@ManyToMany
+	private List<Student> stud = new ArrayList<Student>();
+	public List<Student> getStud() {
+		return stud;
+	}
+	public void setStud(List<Student> stud) {
+		this.stud = stud;
+	}
+	public int getLid() {
+		return lid;
+	}
+	public void setLid(int lid) {
+		this.lid = lid;
+	}
+	public String getLname() {
+		return lname;
+	}
+	public void setLname(String lname) {
+		this.lname = lname;
+	}
+}
+
+
+Student.java
+-------------------
+package com.kakarla.Mapping_Relations;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+
+@Entity
+public class Student {
+	
+	@Id
+	private int roll;
+	private String name;
+	private int marks;
+	@ManyToMany(mappedBy="stud")
+	private List<Laptop> laptop = new ArrayList<Laptop>();
+	
+	public List<Laptop> getLaptop() {
+		return laptop;
+	}
+	public void setLaptop(List<Laptop> laptop) {
+		this.laptop = laptop;
+	}
+	public int getRoll() {
+		return roll;
+	}
+	public void setRoll(int roll) {
+		this.roll = roll;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getMarks() {
+		return marks;
+	}
+	public void setMarks(int marks) {
+		this.marks = marks;
+	}
+}
+
+App.java
+----------------
+package com.kakarla.Mapping_Relations;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	
+    Laptop lap = new Laptop();
+    
+    lap.setLid(103);
+    lap.setLname("hcl");
+    
+    
+    Student stud = new Student();
+    stud.setRoll(8486);
+    stud.setName("ramu");
+    stud.setMarks(94);
+    stud.getLaptop().add(lap);
+    
+    lap.getStud().add(stud);
+    
+    Configuration con = new Configuration().configure().addAnnotatedClass(Laptop.class).addAnnotatedClass(Student.class);
+    
+    SessionFactory sf = con.buildSessionFactory();
+    
+    Session session = sf.openSession();
+    
+    Transaction trans = session.beginTransaction();
+    
+    session.save(lap);
+    session.save(stud);
+    
+    trans.commit();
+    }
+}
+
+hibernate.cfg.xml
+---------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.password">Kakarla$08012001</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/neon</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+    </session-factory>
+</hibernate-configuration>
+
+pom.xml
+----------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.kakarla</groupId>
+  <artifactId>Mapping_Relations</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Mapping_Relations</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.3.0</version>
+</dependency>
+
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>6.4.4.Final</version>
+</dependency>
+  </dependencies>
+</project>
+

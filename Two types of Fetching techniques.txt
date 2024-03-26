@@ -1,0 +1,12 @@
+Two types of Fetching techniques
+--------------------------------------------
+1).Lazy(By Default)
+Example: In an ORM framework like Hibernate in Java, lazy loading might be used for fetching related entities only when they are accessed through lazy-loaded associations.
+2).Eager 
+if you want use the Eager means.
+Explicitly add @OneToMany(fetch=FetchType.EAGER)
+
+Example: In the context of a database query, eager fetching could involve using JOIN statements to retrieve all related data in a single query rather than making separate queries for each piece of related data.
+
+In summary, lazy fetching defers data loading until it is specifically requested, while eager fetching loads all necessary data immediately. 
+

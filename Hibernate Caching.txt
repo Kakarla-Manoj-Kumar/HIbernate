@@ -1,0 +1,174 @@
+Hibernate Caching
+-------------------------
+Hibernate Cache is like a temporary storage area in a computer's memory used by Hibernate
+
+First Level Cache: It's like having a small notebook on your desk. When you need information (like a phone number), you check this notebook first. If it's there, great! You save time because you don't need to look it up elsewhere.
+
+Second Level Cache: Imagine a shared notebook in your office's library. Whenever someone finds a useful piece of information (like a commonly used formula), they write it down in this notebook. Later, if anyone else needs that information, they can quickly find it in this shared notebook instead of searching from scratch.
+
+So, both caches help you save time by keeping frequently accessed information handy, either on your desk or in a shared space accessible to everyone.
+
+First Level Cache is Normal Example of fetching projects.
+
+Example for Second Level Cache: if we want to develop means explicitly we have to do these things.
+
+Table.java
+-------------------
+package com.kakarla.Hibernate_Cache;
+
+
+
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+
+
+@Entity(name="Book")
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
+public class Table {
+	
+	@Id
+	private int roll;
+	@Override
+	public String toString() {
+		return "Table [roll=" + roll + ", name=" + name + ", college=" + college + "]";
+	}
+	private String name;
+	private String college;
+	public int getRoll() {
+		return roll;
+	}
+	public void setRoll(int roll) {
+		this.roll = roll;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getCollege() {
+		return college;
+	}
+	public void setCollege(String college) {
+		this.college = college;
+	}
+}
+
+App.java
+-------------------
+package com.kakarla.Hibernate_Cache;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class App 
+{
+
+    public static void main( String[] args )
+    {
+        Table table=null;
+        
+        Configuration con = new Configuration().configure().addAnnotatedClass(Table.class);
+        
+        SessionFactory sf = con.buildSessionFactory();
+        
+        Session session = sf.openSession();
+        session.beginTransaction();
+        
+        table = (Table)session.get(Table.class, 101);
+        System.out.println(table);
+        
+        session.getTransaction().commit();
+        session.close();
+        
+        Session session2 = sf.openSession();
+        session2.beginTransaction().commit();
+        
+        table = (Table)session2.get(Table.class, 101);
+        System.out.println(table);
+        
+        session2.getTransaction();
+        session2.close();
+    }
+}
+
+pom.xml
+------------
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.kakarla</groupId>
+  <artifactId>Hibernate_Cache</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Hibernate_Cache</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.3.0</version>
+</dependency>
+
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>6.0.0.Alpha7</version>
+</dependency>
+ 
+    <dependency>
+    <groupId>net.sf.ehcache</groupId>
+    <artifactId>ehcache</artifactId>
+    <version>2.10.9.2</version>
+</dependency>
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-ehcache</artifactId>
+    <version>6.0.0.Alpha7</version>
+</dependency>
+  </dependencies>
+</project>
+
+hibernate.cfg.xml
+----------------------
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.password">Kakarla$08012001</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/test</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        <property name="hibernate.cache.use_second_level_cache">true</property>
+        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+    </session-factory>
+</hibernate-configuration>
+
