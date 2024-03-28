@@ -1,0 +1,19 @@
+States of Hibernate
+--------------------------
+
+In Hibernate, a state refers to the various conditions in which an object can exist during its lifecycle within an application. Hibernate defines several states for an object in relation to its interaction with the database. 
+
+The States are Categorized into Four Types:
+
+1).Transient State:
+Session.save() / Session.persist(): These methods are used to transition objects from the transient state to the persistent state by saving them into the database.
+
+2).Persistent State:
+Session.get() / Session.load(): These methods retrieve objects from the database, making them persistent and associated with the current session.
+
+3).Detached State:
+Session.evict(): Removes the object from the current session, causing it to become detached. Subsequent changes to the object won't be tracked by Hibernate.
+
+4).Removed State:
+Session.delete():Marks an object for deletion from the database. After deletion, the object moves to the removed state.
+

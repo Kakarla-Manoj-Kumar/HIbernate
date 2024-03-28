@@ -1,0 +1,3 @@
+JPA(Java Persistence API)
+------------------------------------
+Java Persistence API (JPA) is a tool that helps Java developers to easily save and retrieve data from databases. It's like a bridge between Java code and databases, making it simpler to work with databases without needing to write a lot of complex SQL code. With JPA, developers can use regular Java objects to represent data in their application,
